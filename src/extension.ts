@@ -11,16 +11,21 @@ export function activate(context: ExtensionContext) {
     console.log('Congratulations, your extension "WordCount" is now active!');
 
     let wordCounter = new WordCounter();
+    let wordController = new WordCountController(wordCounter);
 
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
-    let disposable = commands.registerCommand('extension.sayHello', () => {
+    /*******************commented for event driven scenario****************/
+    /*let disposable = commands.registerCommand('extension.sayHello', () => {
         // The code you place here will be executed every time your command is executed
         wordCounter.updateWordCount();
     });
+    */
 
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(wordController);
+    context.subscriptions.push(wordCounter);
+    //context.subscriptions.push(disposable);
 }
 
 // this method is called when your extension is deactivated
@@ -67,5 +72,31 @@ class WordCounter {
 
     dispose() {
         this._statusBarItem.dispose();
+    }
+}
+
+class WordCountController {
+    private _wordCounter: WordCounter;
+    private _disposable: Disposable;
+
+    constructor(wordCounter: WordCounter){
+        this._wordCounter = wordCounter;
+
+        let subscriptions: Disposable[] = [];
+
+        window.onDidChangeActiveTextEditor(this.onEvent, this, subscriptions);
+        window.onDidChangeTextEditorSelection(this.onEvent, this, subscriptions);
+     
+        this._wordCounter.updateWordCount();
+
+        this._disposable = Disposable.from(...subscriptions);
+    }
+
+    dispose() {
+        this._disposable.dispose();
+    }
+
+    onEvent() {
+        this._wordCounter.updateWordCount();
     }
 }

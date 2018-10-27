@@ -1,5 +1,5 @@
 {
-    "name": "WordCount",
+    "name": "wordcount",
     "displayName": "WordCount",
     "description": "Markdown word count",
     "version": "0.0.1",
@@ -11,6 +11,7 @@
         "Other"
     ],
     "activationEvents": [
+        "onLanguage:markdown",
         "onCommand:extension.sayHello"
     ],
     "main": "./out/extension",
