@@ -69,29 +69,3 @@ class WordCounter {
         this._statusBarItem.dispose();
     }
 }
-
-class WordCountController {
-    private _wordCounter: WordCounter;
-    private _disposable: Disposable;
-
-    constructor(wordCounter: WordCounter){
-        this._wordCounter = wordCounter;
-
-        let subscriptions: Disposable[] = [];
-
-        window.onDidChangeActiveTextEditor(this.onEvent, this, subscriptions);
-        window.onDidChangeTextEditorSelection(this.onEvent, this, subscriptions);
-     
-        this._wordCounter.updateWordCount();
-
-        this._disposable = Disposable.from(...subscriptions);
-    }
-
-    dispose() {
-        this._disposable.dispose();
-    }
-
-    onEvent() {
-        this._wordCounter.updateWordCount();
-    }
-}
